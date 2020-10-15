@@ -349,6 +349,16 @@ tracing pipelines.
 Shaders have read-only access to the memory.
 endif::VK_NV_ray_tracing,VK_KHR_ray_tracing[]
 
+ifdef::VK_VALVE_generic_descriptors[]
+=== Generic Descriptors
+
+A _generic descriptor_
+(ename:VK_DESCRIPTOR_TYPE_GENERIC_VALVE) is a descriptor type
+that can be used to reserve space for a descriptor of any descriptor type
+listed in the given slink:VkDescriptorSetLayoutGenericDescriptorsCreateInfoVALVE::pname:pPotentialDescriptorTypes
+array in the pNext chain of slink:VkDescriptorSetLayoutCreateInfo.
+endif::VK_VALVE_generic_descriptors[]
+
 [[descriptorsets-sets]]
 == Descriptor Sets
 
@@ -459,10 +469,50 @@ ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     ename:VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC or
     ename:VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
 endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_VALVE_generic_descriptors[]
+  * If any binding has a pname:descriptorType of ename:VK_DESCRIPTOR_TYPE_GENERIC_VALVE,
+    then a slink:VkDescriptorSetLayoutGenericDescriptorsCreateInfoVALVE must: be present
+    in the pname:pNext chain.
+  * If a binding has a pname:descriptorType value of ename:VK_DESCRIPTOR_TYPE_GENERIC_VALVE,
+    then sname:pImmutableSamplers must: be `NULL`.
+endif::VK_VALVE_generic_descriptors[]
 ****
 
 include::{generated}/validity/structs/VkDescriptorSetLayoutCreateInfo.txt[]
 --
+
+ifdef::VK_VALVE_generic_descriptors[]
+
+[open,refpage='VkDescriptorSetLayoutGenericDescriptorsCreateInfoVALVE',desc='Structure describing descriptor types will be potentially used by generic descriptors in this layout',type='structs']
+--
+The sname:VkDescriptorSetLayoutGenericDescriptorsCreateInfoVALVE structure is
+defined as:
+
+include::{generated}/api/structs/VkDescriptorSetLayoutGenericDescriptorsCreateInfoVALVE.txt[]
+
+The members of the sname:VkDescriptorSetLayoutGenericDescriptorsCreateInfoVALVE
+structure describe the following features:
+
+  * pname:sType is the type of this structure.
+  * pname:pNext is `NULL` or a pointer to a structure extending this
+    structure.
+  * pname:potentialDescriptorTypeCount is the number of elements in
+    pname:pPotentialDescriptorTypes.
+  * pname:pPotentialDescriptorTypes is a pointer to an array
+    of pname:potentialDescriptorTypeCount elink:VkDescriptorType values that
+    will potentially be used as ename:VK_DESCRIPTOR_TYPE_GENERIC_VALVE bindings in descriptor sets of this layout.
+
+.Valid Usage
+****
+  * pname:genericDescriptorsCount must: not be `0`.
+  * pname:genericDescriptors must: be a valid pointer to
+    an array of pname:genericDescriptorsCount valid, unique elink:VkDescriptorType values.
+****
+
+include::{generated}/validity/structs/VkDescriptorSetLayoutGenericDescriptorsCreateInfoVALVE.txt[]
+--
+
+endif::VK_VALVE_generic_descriptors[]
 
 [open,refpage='VkDescriptorSetLayoutCreateFlagBits',desc='Bitmask specifying descriptor set layout properties',type='enums']
 --
@@ -2018,6 +2068,13 @@ endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
 ****
   * [[VUID-VkDescriptorPoolCreateInfo-maxSets-00301]]
     pname:maxSets must: be greater than `0`
+ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_VALVE_generic_descriptors[]
+  * If pname:flags has the ename:VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE
+    bit set, then the ename:VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT bit must:
+    not be set.
+endif::VK_VALVE_generic_descriptors[]
+endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
 ****
 
 include::{generated}/validity/structs/VkDescriptorPoolCreateInfo.txt[]
@@ -2078,6 +2135,21 @@ ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     set the ename:VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT bit from a
     pool that has ename:VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT set.
 endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_VALVE_generic_descriptors[]
+  * ename:VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE specifies that
+    this descriptor pool and the descriptor sets allocated from it
+    reside entirely in host memory and cannot be bound.
+    Descriptor sets allocated from this pool are partially exempt
+    from the external synchronization requirement in
+ifdef::VK_KHR_descriptor_update_template[]
+    flink:vkUpdateDescriptorSetWithTemplateKHR and
+endif::VK_KHR_descriptor_update_template[]
+    flink:vkUpdateDescriptorSets.
+    Descriptor sets and their descriptors can be updated concurrently in
+    different threads, though the same descriptor must: not be updated
+    concurrently by two threads.
+endif::VK_VALVE_generic_descriptors[]
+
 --
 
 [open,refpage='VkDescriptorPoolCreateFlags',desc='Bitmask of VkDescriptorPoolCreateFlagBits',type='flags']
@@ -2190,7 +2262,15 @@ The allocated descriptor sets are returned in pname:pDescriptorSets.
 
 When a descriptor set is allocated, the initial state is largely
 uninitialized and all descriptors are undefined:.
-Descriptors also become undefined: if the underlying resource is destroyed.
+
+Descriptors also become undefined: when:
+
+ifdef::VK_VALVE_generic_descriptors[]
+  * The underlying descriptor types mismatch when copying between
+    ename:VK_DESCRIPTOR_TYPE_GENERIC_VALVE and other descriptor types.
+endif::VK_VALVE_generic_descriptors[]
+  * The underlying resource is destroyed.
+
 Descriptor sets containing undefined: descriptors can: still be bound and
 used, subject to the following conditions:
 
@@ -3851,6 +3931,9 @@ descriptor set.
     pname:pDescriptorSets, the sum of the effective offset, as defined
     above, and the range of the binding must: be less than or equal to the
     size of the buffer
+  * Each element of pname:pDescriptorSets must: not have been allocated from
+    a sname:VkDescriptorPool with the
+    ename:VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE flag set.
 ****
 
 include::{generated}/validity/protos/vkCmdBindDescriptorSets.txt[]

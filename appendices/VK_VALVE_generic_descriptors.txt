@@ -1,0 +1,34 @@
+// Copyright (c) 2020 The Khronos Group Inc.
+//
+// SPDX-License-Identifier: CC-BY-4.0
+
+include::{generated}/meta/{refprefix}VK_VALVE_generic_descriptors.txt[]
+
+=== Other Extension Metadata
+
+*Last Modified Date*::
+    2020-10-15
+*IP Status*::
+    No known IP claims.
+*Contributors*::
+  - Joshua Ashton, Valve
+  - Hans-Kristian Arntzen, Valve
+
+=== Description
+
+This extension defines a mechanism for defining descriptor layouts in which
+bindings can be used to reserve space for other descriptor types via
+a list of potential bindings accompanying the descriptor set layout.
+
+This extension also defines a mechanism for allocating descriptor pools, and therefore
+descriptor sets in host memory only.
+
+This allows the application to create descriptor sets with mutable bindings,
+allowing for one large descriptor set to be used, rather than mutliple smaller sets.
+
+include::{generated}/interfaces/VK_VALVE_generic_descriptors.txt[]
+
+=== Version History
+
+ * Revision 1, 2020-10-15 (Joshua Ashton)
+   - Initial draft
