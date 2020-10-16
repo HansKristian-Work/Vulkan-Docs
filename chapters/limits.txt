@@ -3067,10 +3067,6 @@ ifdef::VK_EXT_robustness2[]
 | basetype:VkDeviceSize    | pname:robustStorageBufferAccessSizeAlignment   | `<<VK_EXT_robustness2>>`
 | basetype:VkDeviceSize    | pname:robustUniformBufferAccessSizeAlignment   | `<<VK_EXT_robustness2>>`
 endif::VK_EXT_robustness2[]
-ifdef::VK_VALVE_generic_descriptors[]
-| code:VkGenericDescriptorListVALVE | pname:supportedGenericDescriptorTypeCount | `<<VK_VALVE_generic_descriptors>>`
-| code:VkGenericDescriptorListVALVE | pname:pSupportedGenericDescriptorTypes | `<<VK_VALVE_generic_descriptors>>`
-endif::VK_VALVE_generic_descriptors[]
 |====
 
 [[limits-required]]
@@ -3357,10 +3353,6 @@ ifdef::VK_EXT_robustness2[]
 | pname:robustStorageBufferAccessSizeAlignment   | - | 4    | max
 | pname:robustUniformBufferAccessSizeAlignment   | - | 256  | max
 endif::VK_EXT_robustness2[]
-ifdef::VK_VALVE_generic_descriptors[]
-| pname:supportedGenericDescriptorTypeCount           | - | 6 | min
-| pname:pSupportedGenericDescriptorTypes              | - | (ename:VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, ename:VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, ename:VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, ename:VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, ename:VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, ename:VK_DESCRIPTOR_TYPE_STORAGE_BUFFER) | min
-endif::VK_VALVE_generic_descriptors[]
 |====
 
 1::
@@ -3503,48 +3495,3 @@ include::{generated}/validity/structs/VkPhysicalDeviceCustomBorderColorPropertie
 --
 
 endif::VK_EXT_custom_border_color[]
-
-ifdef::VK_VALVE_generic_descriptors[]
-
-[open,refpage='VkPhysicalDeviceGenericDescriptorsPropertiesVALVE',desc='Structure describing which descriptor types are supported as generic descriptors',type='structs']
---
-The sname:VkPhysicalDeviceGenericDescriptorsPropertiesVALVE structure is
-defined as:
-
-include::{generated}/api/structs/VkPhysicalDeviceGenericDescriptorsPropertiesVALVE.txt[]
-
-The members of the sname:VkPhysicalDeviceGenericDescriptorsPropertiesVALVE
-structure describe the following features:
-
-  * [[limits-pSupportedGenericDescriptorTypes]]
-    pname:pSupportedGenericDescriptorTypes indicates which descriptor types are
-    supported as generic descriptors.
-    If pname:pSupportedGenericDescriptorTypes is `NULL`, then
-    pname:supportedGenericDescriptorTypeCount will be updated
-    with the number of supported generic descriptor types by the implementation.
-    Otherwise pname:pSupportedGenericDescriptorTypes will be filled with 
-    the list of supported descriptor types as generic descriptors by the implementation up to
-    the given pname:supportedGenericDescriptorTypeCount in the structure,
-    and pname:supportedGenericDescriptorTypeCount will be updated with
-    the number of descriptor types written.
-
-[NOTE]
-.Note
-====
-To find which descriptor types are supported as generic descriptors, the application should:
-use slink:VkPhysicalDeviceGenericDescriptorsPropertiesVALVE with a pname:pSupportedGenericDescriptorTypes of `NULL` to find the pname:supportedGenericDescriptorTypeCount,
-then use slink:VkPhysicalDeviceGenericDescriptorsPropertiesVALVE with a valid pname:pSupportedGenericDescriptorTypes pointing to an
-array of pname:supportedGenericDescriptorTypeCount elink:VkDescriptorType to be filled.
-====
-
-.Valid Usage
-****
-  * pname:pSupportedGenericDescriptorTypes must: be `NULL` or a valid pointer to
-    an array of pname:supportedGenericDescriptorTypeCount supported elink:VkDescriptorType as generic descriptors
-    to be filled in by the implementation.
-****
-
-include::{generated}/validity/structs/VkPhysicalDeviceGenericDescriptorsPropertiesVALVE.txt[]
---
-
-endif::VK_VALVE_generic_descriptors[]

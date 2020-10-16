@@ -3762,21 +3762,21 @@ include::{generated}/validity/structs/VkPhysicalDevice4444FormatsFeaturesEXT.txt
 
 endif::VK_EXT_4444_formats[]
 
-ifdef::VK_VALVE_generic_descriptors[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
 
-[open,refpage='VkPhysicalDeviceGenericDescriptorsFeaturesVALVE',desc='Structure describing whether generic descriptors are supported',type='structs']
+[open,refpage='VkPhysicalDeviceMutableDescriptorTypeFeaturesVALVE',desc='Structure describing whether the mutable descriptor type is supported',type='structs']
 --
-The sname:VkPhysicalDeviceGenericDescriptorsFeaturesVALVE structure is defined
+The sname:VkPhysicalDeviceMutableDescriptorTypeFeaturesVALVE structure is defined
 as:
 
-include::{generated}/api/structs/VkPhysicalDeviceGenericDescriptorsFeaturesVALVE.txt[]
+include::{generated}/api/structs/VkPhysicalDeviceMutableDescriptorTypeFeaturesVALVE.txt[]
 
-The members of the sname:VkPhysicalDeviceGenericDescriptorsFeaturesVALVE
+The members of the sname:VkPhysicalDeviceMutableDescriptorTypeFeaturesVALVE
 structure describe the following features:
 
-  * [[features-genericDescriptors]] pname:genericDescriptors indicates that
+  * [[features-mutableDescriptorType]] pname:mutableDescriptorType indicates that
     the implementation must: support using the elink:VkDescriptorType of
-    ename:VK_DESCRIPTOR_TYPE_GENERIC_VALVE with at least the following
+    ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE with at least the following
     descriptor types:
   ** ename:VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
   ** ename:VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
@@ -3785,10 +3785,10 @@ structure describe the following features:
   ** ename:VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
   ** ename:VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
 
-include::{generated}/validity/structs/VkPhysicalDeviceGenericDescriptorsFeaturesVALVE.txt[]
+include::{generated}/validity/structs/VkPhysicalDeviceMutableDescriptorTypeFeaturesVALVE.txt[]
 --
 
-endif::VK_VALVE_generic_descriptors[]
+endif::VK_VALVE_mutable_descriptor_type[]
 
 [[features-requirements]]
 == Feature Requirements
@@ -4063,10 +4063,10 @@ ifdef::VK_EXT_4444_formats[]
   * <<features-formatA4R4G4B4, pname:formatA4R4G4B4>>, if the
     `<<VK_EXT_4444_formats>>` extension is supported.
 endif::VK_EXT_4444_formats[]
-ifdef::VK_VALVE_generic_descriptors[]
-  * <<features-genericDescriptors, pname:genericDescriptors>>, if the
-    `<<VK_VALVE_generic_descriptors>>` extension is supported.
-endif::VK_VALVE_generic_descriptors[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * <<features-mutableDescriptorType, pname:mutableDescriptorType>>, if the
+    `<<VK_VALVE_mutable_descriptor_type>>` extension is supported.
+endif::VK_VALVE_mutable_descriptor_type[]
 ifdef::VK_EXT_shader_image_atomic_int64[]
   * <<features-shaderInt64, pname:shaderInt64>> and
     <<features-shaderImageInt64Atomics, pname:shaderImageInt64Atomics>>, if
