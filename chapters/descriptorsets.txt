@@ -485,6 +485,16 @@ ifdef::VK_VALVE_mutable_descriptor_type[]
   * If a binding has a pname:descriptorType value of ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
     then sname:pImmutableSamplers must: be `NULL`.
 endif::VK_VALVE_mutable_descriptor_type[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+  * If pname:flags contains ename:VK_DESCRIPTOR_SET_LAYOUT_UPDATE_AFTER_BIND_POOL_BIT,
+    pname:flags must: not contain ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE.
+endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_KHR_push_descriptor[]
+  * If pname:flags contains ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR,
+    pname:flags must: not contain ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE.
+endif::VK_KHR_push_descriptor[]
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 include::{generated}/validity/structs/VkDescriptorSetLayoutCreateInfo.txt[]
@@ -585,6 +595,24 @@ ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     The UpdateAfterBind limits count all descriptors, but the limits may: be
     higher than the non-UpdateAfterBind limits.
 endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE
+    specifies that descriptor sets using this layout must: be allocated
+    from a descriptor pool created with the
+    ename:VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE bit set.
+    Descriptor set layouts created with this bit have same no expressable limit for
+    maximum number of descriptors per-stage.
+    Host descriptor sets are limited only by available host memory, but may: be limited
+    for implementation specific reasons.
+ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+    Implementations may: limit the number of supported descriptors to
+    UpdateAfterBind limits or non-UpdateAfterBind limits, whichever is larger.
+endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifndef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+    Implementations may: limit the number of supported descriptors to
+    non-UpdateAfterBind limits.
+endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+endif::VK_VALVE_mutable_descriptor_type[]
 
 ifndef::VK_KHR_push_descriptor[]
 [NOTE]
@@ -1734,6 +1762,10 @@ ifdef::VK_EXT_fragment_density_map2[]
     less than or equal to
     <<limits-maxDescriptorSetSubsampledSamplers,sname:VkPhysicalDeviceFragmentDensityMap2PropertiesEXT::pname:maxDescriptorSetSubsampledSamplers>>
 endif::VK_EXT_fragment_density_map2[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * Any element of pname:pSetLayouts must: not have been created with the
+    ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_BIT_VALVE bit set.
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 include::{generated}/validity/structs/VkPipelineLayoutCreateInfo.txt[]
@@ -2463,6 +2495,12 @@ ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     set, pname:descriptorPool must: have been created with the
     ename:VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT flag set
 endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * If any element of pname:pSetLayouts was created with the
+    ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE bit set,
+    pname:descriptorPool must: have been created with the
+    ename:VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE flag set.
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 include::{generated}/validity/structs/VkDescriptorSetAllocateInfo.txt[]

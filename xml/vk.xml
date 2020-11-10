@@ -14335,12 +14335,13 @@ typedef void <name>CAMetalLayer</name>;
         </extension>
         <extension name="VK_VALVE_mutable_descriptor_type" number="352" type="device" supported="vulkan" author="VALVE" contact="Joshua Ashton @Joshua-Ashton,Hans-Kristian Arntzen @HansKristian-Work" specialuse="d3demulation" requires="VK_VERSION_1_1,VK_KHR_maintenance3">
             <require>
-                <enum value="3"                                             name="VK_VALVE_MUTABLE_DESCRIPTOR_TYPE_SPEC_VERSION"/>
-                <enum value="&quot;VK_VALVE_mutable_descriptor_type&quot;"      name="VK_VALVE_MUTABLE_DESCRIPTOR_TYPE_EXTENSION_NAME"/>
-                <enum offset="0" extends="VkStructureType"                  name="VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MUTABLE_DESCRIPTOR_TYPE_FEATURES_VALVE"/>
-                <enum offset="2" extends="VkStructureType"                  name="VK_STRUCTURE_TYPE_MUTABLE_DESCRIPTOR_TYPE_CREATE_INFO_VALVE"/>
-                <enum offset="0" extends="VkDescriptorType"                 name="VK_DESCRIPTOR_TYPE_MUTABLE_VALVE"/>
-                <enum bitpos="2" extends="VkDescriptorPoolCreateFlagBits"   name="VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE"/>
+                <enum value="4"                                                name="VK_VALVE_MUTABLE_DESCRIPTOR_TYPE_SPEC_VERSION"/>
+                <enum value="&quot;VK_VALVE_mutable_descriptor_type&quot;"     name="VK_VALVE_MUTABLE_DESCRIPTOR_TYPE_EXTENSION_NAME"/>
+                <enum offset="0" extends="VkStructureType"                     name="VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MUTABLE_DESCRIPTOR_TYPE_FEATURES_VALVE"/>
+                <enum offset="2" extends="VkStructureType"                     name="VK_STRUCTURE_TYPE_MUTABLE_DESCRIPTOR_TYPE_CREATE_INFO_VALVE"/>
+                <enum offset="0" extends="VkDescriptorType"                    name="VK_DESCRIPTOR_TYPE_MUTABLE_VALVE"/>
+                <enum bitpos="2" extends="VkDescriptorPoolCreateFlagBits"      name="VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE"/>
+                <enum bitpos="2" extends="VkDescriptorSetLayoutCreateFlagBits" name="VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE"/>
                 <type name="VkPhysicalDeviceMutableDescriptorTypeFeaturesVALVE"/>
                 <type name="VkMutableTypeDescriptorListVALVE"/>
                 <type name="VkMutableDescriptorTypeCreateInfoVALVE"/>

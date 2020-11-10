@@ -58,3 +58,7 @@ include::{generated}/interfaces/VK_VALVE_mutable_descriptor_type.txt[]
    - Added VUs for Write and Copy with mutable descriptors.
    - Added possibility to use descriptor type lists in VkDescriptorPoolCreateInfo.
    - Renamed VkDescriptorSetLayoutMutableDescriptorTypeCreateInfoVALVE to VkMutableDescriptorTypeCreateInfoVALVE.
+
+ * Revision 4, 2020-11-10 (Hans-Kristian Arntzen)
+   - Added VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE.
+   - Added wording to block DYNAMIC descriptor types and INLINE_UNIFORM_BUFFER to be used with mutable descriptors.
