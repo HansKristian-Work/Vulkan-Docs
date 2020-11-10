@@ -513,15 +513,15 @@ include::{generated}/api/structs/VkMutableDescriptorTypeCreateInfoVALVE.txt[]
 
 If pname:descriptorTypeListCount is zero or if this structure is not included in the pname:pNext chain,
 the slink:VkMutableTypeDescriptorListVALVE for each element is considered to be zero or `NULL` for each member.
-Otherwise, the descriptor set layout binding at slink:VkDescriptorSetLayoutCreateInfo::pname::pBindings[i] uses the
-descriptor type lists in slink:VkMutableDescriptorTypeCreateInfoVALVE::pname::pMutableDescriptorTypeLists[i].
+Otherwise, the descriptor set layout binding at slink:VkDescriptorSetLayoutCreateInfo::pname:pBindings[i] uses the
+descriptor type lists in slink:VkMutableDescriptorTypeCreateInfoVALVE::pname:pMutableDescriptorTypeLists[i].
 
 include::{generated}/validity/structs/VkMutableDescriptorTypeCreateInfoVALVE.txt[]
 --
 
 [open,refpage='VkMutableTypeDescriptorListVALVE',desc='Structure describing descriptor types that a given descriptor may mutate to',type='structs']
 --
-The list of potential descriptor types a given mutable descriptor type can: mutate to
+The list of potential descriptor types a given mutable descriptor can: mutate to
 is passed in a sname:VkMutableTypeDescriptorListVALVE structure.
 
 The sname:VkMutableTypeDescriptorListVALVE structure is
@@ -538,7 +538,7 @@ include::{generated}/api/structs/VkMutableTypeDescriptorListVALVE.txt[]
 
 .Valid Usage
 ****
-  * pname:descriptorTypeCount must: not be `0` if the given binding is of
+  * pname:descriptorTypeCount must: not be `0` if the corresponding binding is of
     ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
   * pname:pDescriptorTypes must: be a valid pointer to
     an array of pname:descriptorTypeCount valid, unique elink:VkDescriptorType values
@@ -547,6 +547,11 @@ include::{generated}/api/structs/VkMutableTypeDescriptorListVALVE.txt[]
     ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
   * pname:pDescriptorTypes must: be `NULL` if the corresponding binding is not of
     ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
+  * pname:pDescriptorTypes must: not contain ename:VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC.
+  * pname:pDescriptorTypes must: not contain ename:VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC.
+ifdef::VK_EXT_inline_uniform_block[]
+  * pname:pDescriptorTypes must: not contain ename:VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT.
+endif::VK_EXT_inline_uniform_block[]
 ****
 
 include::{generated}/validity/structs/VkMutableTypeDescriptorListVALVE.txt[]
@@ -2109,15 +2114,15 @@ underlying hardware resources occurs.
 endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
 
 ifdef::VK_VALVE_mutable_descriptor_type[]
-If a pname::pPoolSizes[i] descriptor type is ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+If a pname:pPoolSizes[i]::pname:type is ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
 a slink:VkMutableDescriptorTypeCreateInfoVALVE struct in the pname:pNext chain may: be used to specify
 which mutable descriptor types can: be allocated from the pool.
 If present in the pname:pNext chain,
-slink:VkMutableDescriptorTypeCreateInfoVALVE::pMutableDescriptorTypeLists[i] specifies
+slink:VkMutableDescriptorTypeCreateInfoVALVE::pname:pMutableDescriptorTypeLists[i] specifies
 which kind of ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE descriptors can: be allocated from this pool entry.
 If slink:VkMutableDescriptorTypeCreateInfoVALVE does not exist in the pname:pNext chain,
 the descriptor pool allocates enough memory to be able to allocate a ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE
-descriptor with any supported sname:VkMutableTypeDescriptorListVALVE.
+descriptor with any supported elink:VkDescriptorType as a mutable descriptor.
 A mutable descriptor can: be allocated from a pool entry if the type list in slink:VkDescriptorSetLayoutCreateInfo
 is a subset of the type list declared in the descriptor pool.
 endif::VK_VALVE_mutable_descriptor_type[]
@@ -3009,7 +3014,7 @@ endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     pname:dstSet must: not have been allocated with a layout that included
     immutable samplers for pname:dstBinding
 ifdef::VK_VALVE_mutable_descriptor_type[]
-  * If sname:VkDescriptorSetLayoutBinding for pname:dstSet at pname:dstBinding
+  * If the sname:VkDescriptorSetLayoutBinding for pname:dstSet at pname:dstBinding
     is ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE, the new active descriptor type
     pname:descriptorType must: exist
     in the corresponding pname:pMutableDescriptorTypeLists list
