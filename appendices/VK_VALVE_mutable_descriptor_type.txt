@@ -7,7 +7,7 @@ include::{generated}/meta/{refprefix}VK_VALVE_mutable_descriptor_type.txt[]
 === Other Extension Metadata
 
 *Last Modified Date*::
-    2020-11-09
+    2020-11-20
 *IP Status*::
     No known IP claims.
 *Contributors*::
