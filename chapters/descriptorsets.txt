@@ -2175,7 +2175,8 @@ or slink:VkMutableDescriptorTypeCreateInfoVALVE::pname:pMutableDescriptorTypeLis
 the descriptor pool allocates enough memory to be able to allocate a ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE
 descriptor with any supported elink:VkDescriptorType as a mutable descriptor.
 A mutable descriptor can: be allocated from a pool entry if the type list in slink:VkDescriptorSetLayoutCreateInfo
-is a subset of the type list declared in the descriptor pool.
+is a subset of the type list declared in the descriptor pool, or if the pool entry
+is created without a descriptor type list.
 endif::VK_VALVE_mutable_descriptor_type[]
 
 .Valid Usage
