@@ -7,7 +7,7 @@ include::{generated}/meta/{refprefix}VK_VALVE_mutable_descriptor_type.txt[]
 === Other Extension Metadata
 
 *Last Modified Date*::
-    2020-11-20
+    2020-11-24
 *IP Status*::
     No known IP claims.
 *Contributors*::
@@ -62,3 +62,6 @@ include::{generated}/interfaces/VK_VALVE_mutable_descriptor_type.txt[]
  * Revision 4, 2020-11-10 (Hans-Kristian Arntzen)
    - Added VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE.
    - Added wording to block DYNAMIC descriptor types and INLINE_UNIFORM_BUFFER to be used with mutable descriptors.
+
+ * Revision 5, 2020-11-24 (Hans-Kristian Arntzen)
+   - Added VUs to clarify that mutable descriptors cannot be used with push descriptors or descriptor update templates.

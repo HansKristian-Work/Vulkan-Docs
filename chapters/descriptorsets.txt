@@ -500,6 +500,8 @@ ifdef::VK_KHR_push_descriptor[]
   * If pname:flags contains ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR,
     pname:flags must: not contain ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE.
 endif::VK_KHR_push_descriptor[]
+  * If any binding has a pname:descriptorType of ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+    pname:flags must: not contain ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR.
 endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
@@ -3645,6 +3647,11 @@ ifdef::VK_KHR_push_descriptor[]
     descriptor set layout that was created with
     ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR
 endif::VK_KHR_push_descriptor[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * If pname:templateType is ename:VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET,
+    pname:descriptorSetLayout must: not contain a binding
+    with type ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 
