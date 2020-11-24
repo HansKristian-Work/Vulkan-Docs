@@ -3362,15 +3362,6 @@ ifdef::VK_EXT_inline_uniform_block[]
     pname:dstArrayElement specifies the starting byte offset within the
     binding to copy to.
 endif::VK_EXT_inline_uniform_block[]
-ifdef::VK_VALVE_mutable_descriptor_type[]
-    If the sname:VkDescriptorSetLayoutBinding for pname:dstBinding is
-    ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE and pname:srcBinding is not
-    ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
-    the new active descriptor type becomes the descriptor type of pname:srcBinding.
-    If both sname:VkDescriptorSetLayoutBinding for pname:srcBinding and pname:dstBinding
-    are ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
-    the active descriptor type in source is copied into destination.
-endif::VK_VALVE_mutable_descriptor_type[]
   * pname:descriptorCount is the number of descriptors to copy from the
     source to destination.
     If pname:descriptorCount is greater than the number of remaining array
@@ -3384,6 +3375,27 @@ ifdef::VK_EXT_inline_uniform_block[]
     remaining array elements in the source or destination binding refer to
     the remaining number of bytes in those.
 endif::VK_EXT_inline_uniform_block[]
+
+ifdef::VK_VALVE_mutable_descriptor_type[]
+If the sname:VkDescriptorSetLayoutBinding for pname:dstBinding is
+ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE and pname:srcBinding is not
+ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+the new active descriptor type becomes the descriptor type of pname:srcBinding.
+If both sname:VkDescriptorSetLayoutBinding for pname:srcBinding and pname:dstBinding
+are ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+the active descriptor type in each source descriptor is copied into
+the corresponding destination descriptor.
+The active descriptor type can: be different for each source descriptor.
+
+[NOTE]
+.Note
+====
+The intention is that copies to and from mutable descriptors is a simple memcpy.
+Copies between non-mutable and mutable descriptors are expected to require one memcpy
+per descriptor to handle the difference in size, but this use case
+with more than one pname:descriptorCount is considered rare.
+====
+endif::VK_VALVE_mutable_descriptor_type[]
 
 .Valid Usage
 ****
