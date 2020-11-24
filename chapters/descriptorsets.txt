@@ -372,6 +372,15 @@ slink:VkMutableDescriptorTypeCreateInfoVALVE::pname:pDescriptorTypes array
 for that binding.
 ====
 
+[NOTE]
+.Note
+====
+The intention of a mutable descriptor type is that implementations allocate N bytes per descriptor,
+where N is determined by the maximum descriptor size for a given descriptor binding.
+Implementations are not expected to keep track of the active descriptor type,
+and it should be considered a C-like union type.
+====
+
 endif::VK_VALVE_mutable_descriptor_type[]
 
 [[descriptorsets-sets]]
