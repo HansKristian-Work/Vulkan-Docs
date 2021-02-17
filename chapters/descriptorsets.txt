@@ -340,6 +340,49 @@ tracing pipelines.
 Shaders have read-only access to the memory.
 endif::VK_NV_ray_tracing,VK_KHR_ray_tracing[]
 
+ifdef::VK_VALVE_mutable_descriptor_type[]
+[[descriptorsets-mutable]]
+=== Mutable
+
+A descriptor of _mutable_
+(ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE) type indicates that this descriptor
+may mutate to any of the descriptor types given in the
+slink:VkMutableDescriptorTypeCreateInfoVALVE::pname:pDescriptorTypes
+list of descriptor types in the pNext chain of slink:VkDescriptorSetLayoutCreateInfo
+for this binding. At any point,
+each individual descriptor of mutable type has an active descriptor type.
+The active descriptor type can: be any one of the declared types in pname:pDescriptorTypes.
+Additionally, a mutable descriptor's active descriptor type
+can: be of the ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE type, which is the initial active descriptor type.
+The active descriptor type can: change when the descriptor is updated.
+When a descriptor is consumed, the active descriptor type is considered,
+not ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
+
+An active descriptor type of ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE is considered
+an undefined: descriptor.
+
+[NOTE]
+.Note
+====
+To find which descriptor types are supported as ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+the application can:
+use flink:vkGetDescriptorSetLayoutSupport with an ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE binding,
+with the list of descriptor types to query in the
+slink:VkMutableDescriptorTypeCreateInfoVALVE::pname:pDescriptorTypes array
+for that binding.
+====
+
+[NOTE]
+.Note
+====
+The intention of a mutable descriptor type is that implementations allocate N bytes per descriptor,
+where N is determined by the maximum descriptor size for a given descriptor binding.
+Implementations are not expected to keep track of the active descriptor type,
+and it should be considered a C-like union type.
+====
+
+endif::VK_VALVE_mutable_descriptor_type[]
+
 [[descriptorsets-sets]]
 == Descriptor Sets
 
@@ -450,10 +493,99 @@ ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     ename:VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC or
     ename:VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
 endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * If any binding has a pname:descriptorType of ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+    then a slink:VkMutableDescriptorTypeCreateInfoVALVE must: be present
+    in the pname:pNext chain.
+  * If a binding has a pname:descriptorType value of ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+    then sname:pImmutableSamplers must: be `NULL`.
+endif::VK_VALVE_mutable_descriptor_type[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+  * If pname:flags contains ename:VK_DESCRIPTOR_SET_LAYOUT_UPDATE_AFTER_BIND_POOL_BIT,
+    pname:flags must: not contain ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE.
+endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_KHR_push_descriptor[]
+  * If pname:flags contains ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR,
+    pname:flags must: not contain ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE.
+endif::VK_KHR_push_descriptor[]
+  * If any binding has a pname:descriptorType of ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+    pname:flags must: not contain ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR.
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 include::{generated}/validity/structs/VkDescriptorSetLayoutCreateInfo.txt[]
 --
+
+ifdef::VK_VALVE_mutable_descriptor_type[]
+
+[open,refpage='VkMutableDescriptorTypeCreateInfoVALVE',desc='Structure describing the list of possible active descriptor types for mutable type descriptors',type='structs']
+--
+Information about the possible descriptor types for mutable descriptor types is passed in
+a sname:VkMutableDescriptorTypeCreateInfoVALVE structure as a pname:pNext to
+a slink:VkDescriptorSetLayoutCreateInfo structure or a slink:VkDescriptorPoolCreateInfo structure.
+
+The sname:VkMutableDescriptorTypeCreateInfoVALVE structure is
+defined as:
+
+include::{generated}/api/structs/VkMutableDescriptorTypeCreateInfoVALVE.txt[]
+
+  * pname:sType is the type of this structure.
+  * pname:pNext is `NULL` or a pointer to a structure extending this
+    structure.
+  * pname:descriptorTypeListCount is the number of elements in
+    pname:pMutableDescriptorTypeLists.
+  * pname:pMutableDescriptorTypeLists is a pointer to an array of
+    sname:VkMutableTypeDescriptorListVALVE structures.
+
+If pname:descriptorTypeListCount is zero or if this structure is not included in the pname:pNext chain,
+the slink:VkMutableTypeDescriptorListVALVE for each element is considered to be zero or `NULL` for each member.
+Otherwise, the descriptor set layout binding at slink:VkDescriptorSetLayoutCreateInfo::pname:pBindings[i] uses the
+descriptor type lists in slink:VkMutableDescriptorTypeCreateInfoVALVE::pname:pMutableDescriptorTypeLists[i].
+
+include::{generated}/validity/structs/VkMutableDescriptorTypeCreateInfoVALVE.txt[]
+--
+
+[open,refpage='VkMutableTypeDescriptorListVALVE',desc='Structure describing descriptor types that a given descriptor may mutate to',type='structs']
+--
+The list of potential descriptor types a given mutable descriptor can: mutate to
+is passed in a sname:VkMutableTypeDescriptorListVALVE structure.
+
+The sname:VkMutableTypeDescriptorListVALVE structure is
+defined as:
+
+include::{generated}/api/structs/VkMutableTypeDescriptorListVALVE.txt[]
+
+  * pname:descriptorTypeCount is the number of elements in
+    pname:pDescriptorTypes.
+  * pname:pDescriptorTypes is `NULL` or a pointer to an array of
+    pname:descriptorTypeCount elink:VkDescriptorType values
+    which define which descriptor types a given binding may
+    mutate to.
+
+.Valid Usage
+****
+  * pname:descriptorTypeCount must: not be `0` if the corresponding binding is of
+    ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
+  * pname:pDescriptorTypes must: be a valid pointer to
+    an array of pname:descriptorTypeCount valid, unique elink:VkDescriptorType values
+    if the given binding is of ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE type.
+  * pname:descriptorTypeCount must: be `0` if the corresponding binding is not of
+    ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
+  * pname:pDescriptorTypes must: be `NULL` if the corresponding binding is not of
+    ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
+  * pname:pDescriptorTypes must: not contain ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
+  * pname:pDescriptorTypes must: not contain ename:VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC.
+  * pname:pDescriptorTypes must: not contain ename:VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC.
+ifdef::VK_EXT_inline_uniform_block[]
+  * pname:pDescriptorTypes must: not contain ename:VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT.
+endif::VK_EXT_inline_uniform_block[]
+****
+
+include::{generated}/validity/structs/VkMutableTypeDescriptorListVALVE.txt[]
+--
+
+endif::VK_VALVE_mutable_descriptor_type[]
 
 [open,refpage='VkDescriptorSetLayoutCreateFlagBits',desc='Bitmask specifying descriptor set layout properties',type='enums']
 --
@@ -481,6 +613,24 @@ ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     The UpdateAfterBind limits count all descriptors, but the limits may: be
     higher than the non-UpdateAfterBind limits.
 endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE
+    specifies that descriptor sets using this layout must: be allocated
+    from a descriptor pool created with the
+    ename:VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE bit set.
+    Descriptor set layouts created with this bit have no expressable limit for
+    maximum number of descriptors per-stage.
+    Host descriptor sets are limited only by available host memory, but may: be limited
+    for implementation specific reasons.
+ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+    Implementations may: limit the number of supported descriptors to
+    UpdateAfterBind limits or non-UpdateAfterBind limits, whichever is larger.
+endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifndef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+    Implementations may: limit the number of supported descriptors to
+    non-UpdateAfterBind limits.
+endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+endif::VK_VALVE_mutable_descriptor_type[]
 
 ifndef::VK_KHR_push_descriptor[]
 [NOTE]
@@ -612,6 +762,10 @@ ifdef::VK_EXT_custom_border_color[]
     ename:VK_BORDER_COLOR_FLOAT_CUSTOM_EXT or
     ename:VK_BORDER_COLOR_INT_CUSTOM_EXT
 endif::VK_EXT_custom_border_color[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * If pname:descriptorType is ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+    then sname:pImmutableSamplers must: be `NULL`.
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 include::{generated}/validity/structs/VkDescriptorSetLayoutBinding.txt[]
@@ -1626,6 +1780,10 @@ ifdef::VK_EXT_fragment_density_map2[]
     less than or equal to
     <<limits-maxDescriptorSetSubsampledSamplers,sname:VkPhysicalDeviceFragmentDensityMap2PropertiesEXT::pname:maxDescriptorSetSubsampledSamplers>>
 endif::VK_EXT_fragment_density_map2[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * Any element of pname:pSetLayouts must: not have been created with the
+    ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_BIT_VALVE bit set.
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 include::{generated}/validity/structs/VkPipelineLayoutCreateInfo.txt[]
@@ -2005,10 +2163,33 @@ pname:maxUpdateAfterBindDescriptorsInAllPools, or if fragmentation of the
 underlying hardware resources occurs.
 endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
 
+ifdef::VK_VALVE_mutable_descriptor_type[]
+If a pname:pPoolSizes[i]::pname:type is ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+a slink:VkMutableDescriptorTypeCreateInfoVALVE struct in the pname:pNext chain can: be used to specify
+which mutable descriptor types can: be allocated from the pool.
+If present in the pname:pNext chain,
+slink:VkMutableDescriptorTypeCreateInfoVALVE::pname:pMutableDescriptorTypeLists[i] specifies
+which kind of ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE descriptors can: be allocated from this pool entry.
+If slink:VkMutableDescriptorTypeCreateInfoVALVE does not exist in the pname:pNext chain,
+or slink:VkMutableDescriptorTypeCreateInfoVALVE::pname:pMutableDescriptorTypeLists[i] is out of range,
+the descriptor pool allocates enough memory to be able to allocate a ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE
+descriptor with any supported elink:VkDescriptorType as a mutable descriptor.
+A mutable descriptor can: be allocated from a pool entry if the type list in slink:VkDescriptorSetLayoutCreateInfo
+is a subset of the type list declared in the descriptor pool, or if the pool entry
+is created without a descriptor type list.
+endif::VK_VALVE_mutable_descriptor_type[]
+
 .Valid Usage
 ****
   * [[VUID-VkDescriptorPoolCreateInfo-maxSets-00301]]
     pname:maxSets must: be greater than `0`
+ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * If pname:flags has the ename:VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE
+    bit set, then the ename:VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT bit must:
+    not be set.
+endif::VK_VALVE_mutable_descriptor_type[]
+endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
 ****
 
 include::{generated}/validity/structs/VkDescriptorPoolCreateInfo.txt[]
@@ -2069,6 +2250,21 @@ ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     set the ename:VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT bit from a
     pool that has ename:VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT set.
 endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * ename:VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE specifies that
+    this descriptor pool and the descriptor sets allocated from it
+    reside entirely in host memory and cannot be bound.
+    Descriptor sets allocated from this pool are partially exempt
+    from the external synchronization requirement in
+ifdef::VK_KHR_descriptor_update_template[]
+    flink:vkUpdateDescriptorSetWithTemplateKHR and
+endif::VK_KHR_descriptor_update_template[]
+    flink:vkUpdateDescriptorSets.
+    Descriptor sets and their descriptors can be updated concurrently in
+    different threads, though the same descriptor must: not be updated
+    concurrently by two threads.
+endif::VK_VALVE_mutable_descriptor_type[]
+
 --
 
 [open,refpage='VkDescriptorPoolCreateFlags',desc='Bitmask of VkDescriptorPoolCreateFlagBits',type='flags']
@@ -2319,6 +2515,12 @@ ifdef::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     set, pname:descriptorPool must: have been created with the
     ename:VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT flag set
 endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * If any element of pname:pSetLayouts was created with the
+    ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_HOST_ONLY_POOL_BIT_VALVE bit set,
+    pname:descriptorPool must: have been created with the
+    ename:VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE flag set.
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 include::{generated}/validity/structs/VkDescriptorSetAllocateInfo.txt[]
@@ -2567,7 +2769,14 @@ endif::VK_EXT_inline_uniform_block[]
   * pname:descriptorType is a elink:VkDescriptorType specifying the type of
     each descriptor in pname:pImageInfo, pname:pBufferInfo, or
     pname:pTexelBufferView, as described below.
-    It must: be the same type as that specified in
+ifdef::VK_VALVE_mutable_descriptor_type[]
+    If sname:VkDescriptorSetLayoutBinding for pname:dstSet at pname:dstBinding is not equal
+    to ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE, pname:descriptorType must:
+endif::VK_VALVE_mutable_descriptor_type[]
+ifndef::VK_VALVE_mutable_descriptor_type[]
+    It must:
+endif::VK_VALVE_mutable_descriptor_type[]
+    be the same type as that specified in
     sname:VkDescriptorSetLayoutBinding for pname:dstSet at pname:dstBinding.
     The type of the descriptor also controls which array the descriptors are
     taken from.
@@ -2606,6 +2815,11 @@ buffer, imageView, or bufferView can: be dlink:VK_NULL_HANDLE.
 Loads from a null descriptor return zero values and stores and atomics to a
 null descriptor are discarded.
 endif::VK_EXT_robustness2[]
+
+ifdef::VK_VALVE_mutable_descriptor_type[]
+If the destination descriptor is a mutable descriptor,
+the active descriptor type for the destination descriptor becomes pname:descriptorType.
+endif::VK_VALVE_mutable_descriptor_type[]
 
 [[descriptorsets-updates-consecutive, consecutive binding updates]]
 If the pname:dstBinding has fewer than pname:descriptorCount array elements
@@ -2857,6 +3071,13 @@ endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     If pname:descriptorType is ename:VK_DESCRIPTOR_TYPE_SAMPLER, then
     pname:dstSet must: not have been allocated with a layout that included
     immutable samplers for pname:dstBinding
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * If the sname:VkDescriptorSetLayoutBinding for pname:dstSet at pname:dstBinding
+    is ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE, the new active descriptor type
+    pname:descriptorType must: exist
+    in the corresponding pname:pMutableDescriptorTypeLists list
+    for pname:dstBinding.
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 include::{generated}/validity/structs/VkWriteDescriptorSet.txt[]
@@ -2900,6 +3121,10 @@ ifdef::VK_EXT_inline_uniform_block[]
   * ename:VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT specifies an
     <<descriptorsets-inlineuniformblock, inline uniform block>>.
 endif::VK_EXT_inline_uniform_block[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE specifies a
+    <<descriptorsets-mutable, descriptor of mutable type>>.
+endif::VK_VALVE_mutable_descriptor_type[]
 
 When a descriptor set is updated via elements of slink:VkWriteDescriptorSet,
 members of pname:pImageInfo, pname:pBufferInfo and pname:pTexelBufferView
@@ -3152,6 +3377,27 @@ ifdef::VK_EXT_inline_uniform_block[]
     the remaining number of bytes in those.
 endif::VK_EXT_inline_uniform_block[]
 
+ifdef::VK_VALVE_mutable_descriptor_type[]
+If the sname:VkDescriptorSetLayoutBinding for pname:dstBinding is
+ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE and pname:srcBinding is not
+ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+the new active descriptor type becomes the descriptor type of pname:srcBinding.
+If both sname:VkDescriptorSetLayoutBinding for pname:srcBinding and pname:dstBinding
+are ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+the active descriptor type in each source descriptor is copied into
+the corresponding destination descriptor.
+The active descriptor type can: be different for each source descriptor.
+
+[NOTE]
+.Note
+====
+The intention is that copies to and from mutable descriptors is a simple memcpy.
+Copies between non-mutable and mutable descriptors are expected to require one memcpy
+per descriptor to handle the difference in size, but this use case
+with more than one pname:descriptorCount is considered rare.
+====
+endif::VK_VALVE_mutable_descriptor_type[]
+
 .Valid Usage
 ****
   * [[VUID-VkCopyDescriptorSet-srcBinding-00345]]
@@ -3222,6 +3468,23 @@ endif::VK_VERSION_1_2,VK_EXT_descriptor_indexing[]
     pname:dstBinding is ename:VK_DESCRIPTOR_TYPE_SAMPLER, then pname:dstSet
     must: not have been allocated with a layout that included immutable
     samplers for pname:dstBinding
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * If sname:VkDescriptorSetLayoutBinding for pname:dstSet at pname:dstBinding
+    is ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE, the new active descriptor type
+    must: exist in the corresponding pname:pMutableDescriptorTypeLists list
+    for pname:dstBinding if the new active descriptor type is
+    not ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
+  * If sname:VkDescriptorSetLayoutBinding for pname:srcSet at pname:srcBinding
+    is ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE and
+    the sname:VkDescriptorSetLayoutBinding for pname:dstSet at pname:dstBinding
+    is not ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE, the active descriptor type
+    for the source descriptor must: match the descriptor type of pname:dstBinding.
+  * If sname:VkDescriptorSetLayoutBinding for pname:dstSet at pname:dstBinding
+    is ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE, and the new active descriptor type
+    is ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE, the
+    pname:pMutableDescriptorTypeLists for pname:srcBinding and pname:dstBinding must:
+    match exactly.
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 include::{generated}/validity/structs/VkCopyDescriptorSet.txt[]
@@ -3406,6 +3669,11 @@ ifdef::VK_KHR_push_descriptor[]
     descriptor set layout that was created with
     ename:VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR
 endif::VK_KHR_push_descriptor[]
+ifdef::VK_VALVE_mutable_descriptor_type[]
+  * If pname:templateType is ename:VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET,
+    pname:descriptorSetLayout must: not contain a binding
+    with type ename:VK_DESCRIPTOR_TYPE_MUTABLE_VALVE.
+endif::VK_VALVE_mutable_descriptor_type[]
 ****
 
 
@@ -3834,6 +4102,9 @@ descriptor set.
     pname:pDescriptorSets, the sum of the effective offset, as defined
     above, and the range of the binding must: be less than or equal to the
     size of the buffer
+  * Each element of pname:pDescriptorSets must: not have been allocated from
+    a sname:VkDescriptorPool with the
+    ename:VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE flag set.
 ****
 
 include::{generated}/validity/protos/vkCmdBindDescriptorSets.txt[]
